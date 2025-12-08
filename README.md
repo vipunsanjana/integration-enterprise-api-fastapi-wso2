@@ -28,7 +28,7 @@ A **FastAPI** backend providing APIs for **Users**, **Orders**, and **Health Che
 1. Clone the repository:
 
 ```bash
-git clone [<repository-url>](https://github.com/vipunsanjana/integration-enterprise-api-fastapi-wso2)
+git clone https://github.com/vipunsanjana/integration-enterprise-api-fastapi-wso2
 cd integration-enterprise-api-fastapi-wso2
 ````
 
