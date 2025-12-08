@@ -39,3 +39,4 @@ htmlcov/
 .nox/
 .coverage.*
 .cache
+Testing-API/

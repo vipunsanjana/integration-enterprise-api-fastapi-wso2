@@ -1,4 +1,5 @@
 openapi: 3.0.3
+
 info:
   title: Health Check API
   description: Simple health check endpoint
@@ -19,6 +20,7 @@ paths:
         - Health
       summary: Health check
       description: Returns the status of the service
+
       responses:
         '200':
           description: Service is up
@@ -27,16 +29,95 @@ paths:
               schema:
                 type: object
                 properties:
-                  service:
-                    type: string
-                    example: "FastAPI Backend"
-                  status:
-                    type: string
-                    example: "UP"
+                  ResponseHeader:
+                    type: object
+                    properties:
+                      StatusCode:
+                        type: integer
+                        example: 1000
+                      StatusMessage:
+                        type: string
+                        example: Success
+                      StatusDesc:
+                        type: string
+                        example: OK
+                      RequestId:
+                        type: string
+                        example: "123456789"
+                  ResponseBody:
+                    type: object
+                    properties:
+                      service:
+                        type: string
+                        example: "FastAPI Backend"
+                      status:
+                        type: string
+                        example: "UP"
+              example:
+                {
+                  "ResponseHeader": {
+                    "StatusCode": 1000,
+                    "StatusMessage": "Success",
+                    "StatusDesc": "OK",
+                    "RequestId": "123456789"
+                  },
+                  "ResponseBody": {
+                    "service": "FastAPI Backend",
+                    "status": "UP"
+                  }
+                }
+
+        '400':
+          description: Failure - Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                BadRequest:
+                  summary: Bad request
+                  value:
+                    {
+                      "ResponseHeader": {
+                        "StatusCode": 1001,
+                        "StatusMessage": "Error",
+                        "StatusDesc": "Bad Request",
+                        "RequestId": "987654321",
+                        "ErrorCode": "ERR_400",
+                        "ErrorMessage": "Invalid request"
+                      },
+                      "ResponseBody": { }
+                    }
+
+        '500':
+          description: Failure - Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                InternalServerError:
+                  summary: Internal server error
+                  value:
+                    {
+                      "ResponseHeader": {
+                        "StatusCode": 1001,
+                        "StatusMessage": "Error",
+                        "StatusDesc": "Internal system error",
+                        "RequestId": "456789123",
+                        "ErrorCode": "ERR_500",
+                        "ErrorMessage": "Unexpected error occurred"
+                      },
+                      "ResponseBody": { }
+                    }
+
       security:
-        - default: []
+        - default:
+            - common
+
       x-auth-type: Application & Application User
       x-throttling-tier: Unlimited
+
       x-wso2-application-security:
         security-types:
           - oauth2
@@ -49,7 +130,8 @@ components:
       flows:
         implicit:
           authorizationUrl: 'https://test.com'
-          scopes: {}
+          scopes:
+            common: common access
 
 x-wso2-api-key-header: ApiKey
 x-wso2-auth-header: Authorization
@@ -85,6 +167,7 @@ x-wso2-sandbox-endpoints:
   type: http
 
 x-wso2-basePath: /healthcheckapi/1.0.0
+
 x-wso2-transports:
   - http
   - https

@@ -1,4 +1,5 @@
 openapi: 3.0.3
+
 info:
   title: User API
   description: API for managing users
@@ -11,10 +12,6 @@ servers:
 tags:
   - name: Users
     description: Operations related to users
-  - name: Orders
-    description: Operations related to orders
-  - name: Health
-    description: Health check endpoints
 
 paths:
   /users/all:
@@ -23,6 +20,7 @@ paths:
         - Users
       summary: Get all users
       description: Retrieve a list of users. Optional query parameter to limit results.
+
       parameters:
         - name: limit
           in: query
@@ -31,17 +29,92 @@ paths:
           schema:
             type: integer
             default: 10
+            example: 5
+
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserResponse'
+                type: object
+                properties:
+                  ResponseHeader:
+                    type: object
+                  ResponseBody:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserResponse'
+              example:
+                {
+                  "ResponseHeader": {
+                    "StatusCode": 1000,
+                    "StatusMessage": "Success",
+                    "StatusDesc": "OK",
+                    "RequestId": "REQ123456"
+                  },
+                  "ResponseBody": [
+                    {
+                      "id": 1,
+                      "name": "Alice",
+                      "email": "alice@example.com"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Bob",
+                      "email": "bob@example.com"
+                    }
+                  ]
+                }
+
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                InvalidInput:
+                  summary: Invalid input
+                  value:
+                    {
+                      "ResponseHeader": {
+                        "StatusCode": 1001,
+                        "StatusMessage": "Error",
+                        "StatusDesc": "Invalid input",
+                        "RequestId": "REQ4001",
+                        "ErrorCode": "ERR_400",
+                        "ErrorMessage": "Invalid query parameter"
+                      },
+                      "ResponseBody": { }
+                    }
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                ServerError:
+                  summary: Internal server error
+                  value:
+                    {
+                      "ResponseHeader": {
+                        "StatusCode": 1001,
+                        "StatusMessage": "Error",
+                        "StatusDesc": "Internal system error",
+                        "RequestId": "REQ5001",
+                        "ErrorCode": "ERR_500",
+                        "ErrorMessage": "Unexpected server error"
+                      },
+                      "ResponseBody": { }
+                    }
+
       security:
-        - default: []
+        - default:
+            - common
+
       x-auth-type: Application & Application User
       x-throttling-tier: Unlimited
       x-wso2-application-security:
@@ -49,35 +122,108 @@ paths:
           - oauth2
         optional: false
 
+
   /users/create:
     post:
       tags:
         - Users
       summary: Create a new user
       description: Create a new user by providing name and email
+
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/UserCreate'
+            example:
+              {
+                "name": "Alice",
+                "email": "alice@example.com"
+              }
+
       responses:
         '200':
           description: User created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                type: object
+                properties:
+                  ResponseHeader:
+                    type: object
+                  ResponseBody:
+                    $ref: '#/components/schemas/UserResponse'
+              example:
+                {
+                  "ResponseHeader": {
+                    "StatusCode": 1000,
+                    "StatusMessage": "Success",
+                    "StatusDesc": "User created successfully",
+                    "RequestId": "REQ777888"
+                  },
+                  "ResponseBody": {
+                    "id": 1,
+                    "name": "Alice",
+                    "email": "alice@example.com"
+                  }
+                }
+
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                ValidationError:
+                  summary: Validation error
+                  value:
+                    {
+                      "ResponseHeader": {
+                        "StatusCode": 1001,
+                        "StatusMessage": "Error",
+                        "StatusDesc": "Validation failed",
+                        "RequestId": "REQ4002",
+                        "ErrorCode": "ERR_1000005",
+                        "ErrorMessage": "Name and Email are required"
+                      },
+                      "ResponseBody": { }
+                    }
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                ServerError:
+                  summary: Internal server error
+                  value:
+                    {
+                      "ResponseHeader": {
+                        "StatusCode": 1001,
+                        "StatusMessage": "Error",
+                        "StatusDesc": "Internal system error",
+                        "RequestId": "REQ5002",
+                        "ErrorCode": "ERR_10000000",
+                        "ErrorMessage": "Unexpected error occurred"
+                      },
+                      "ResponseBody": { }
+                    }
+
       security:
-        - default: []
+        - default:
+            - common
+
       x-auth-type: Application & Application User
       x-throttling-tier: Unlimited
       x-wso2-application-security:
         security-types:
           - oauth2
         optional: false
+
 
 components:
   schemas:
@@ -104,16 +250,20 @@ components:
               type: integer
               example: 1
 
+
   securitySchemes:
     default:
       type: oauth2
       flows:
         implicit:
           authorizationUrl: 'https://test.com'
-          scopes: {}
+          scopes:
+            common: common access
+
 
 x-wso2-api-key-header: ApiKey
 x-wso2-auth-header: Authorization
+
 x-wso2-cors:
   corsConfigurationEnabled: false
   accessControlAllowOrigins:
@@ -133,22 +283,32 @@ x-wso2-cors:
     - DELETE
     - PATCH
     - OPTIONS
+
+
 x-wso2-production-endpoints:
   urls:
     - 'http://localhost:9000/api/v1'
   type: http
+
 x-wso2-sandbox-endpoints:
   urls:
     - 'http://localhost:9000/api/v1'
   type: http
+
+
 x-wso2-basePath: /userapi/1.0.0
+
 x-wso2-transports:
   - http
   - https
+
+
 x-wso2-application-security:
   security-types:
     - oauth2
   optional: false
+
+
 x-wso2-response-cache:
   enabled: false
   cacheTimeoutInSeconds: 300
