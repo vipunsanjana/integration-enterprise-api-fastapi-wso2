@@ -1,4 +1,3 @@
-
 # Enterprise Integration APIs
 
 A **FastAPI** backend providing APIs for **Users**, **Orders**, and **Health Check**, designed for integration with **WSO2 API Manager** and documented via **OpenAPI**.
@@ -29,8 +28,8 @@ A **FastAPI** backend providing APIs for **Users**, **Orders**, and **Health Che
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone [<repository-url>](https://github.com/vipunsanjana/integration-enterprise-api-fastapi-wso2)
+cd integration-enterprise-api-fastapi-wso2
 ````
 
 2. Create & activate a virtual environment:
@@ -57,8 +56,8 @@ pip install -r requirements.txt
 python -m app.main
 ```
 
-Swagger UI: `http://localhost:8000/docs`
-ReDoc: `http://localhost:8000/redoc`
+Swagger UI: `http://localhost:9000/docs`
+ReDoc: `http://localhost:9000/redoc`
 
 ---
 
