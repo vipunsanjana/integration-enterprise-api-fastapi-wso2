@@ -1,0 +1,2 @@
+"use strict";(this.webpackChunk_wso2apim_devportal=this.webpackChunk_wso2apim_devportal||[]).push([[5252],{815252:(e,t)=>{var o=function(){if("undefined"!=typeof self)return self;if("undefined"!=typeof window)return window;if(void 0!==o)return o;throw new Error("unable to locate global object")}();e.exports=t=o.fetch,o.fetch&&(t.default=o.fetch.bind(o)),t.Headers=o.Headers,t.Request=o.Request,t.Response=o.Response}}]);
+//# sourceMappingURL=5252.2744da4bdacb3008ef6e.bundle.js.map

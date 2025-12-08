@@ -1,0 +1,99 @@
+openapi: 3.0.3
+info:
+  title: Health Check API
+  description: Simple health check endpoint
+  version: 1.0.0.
+
+servers:
+  - url: http://localhost:9000/api/v1
+    description: Local development server
+
+tags:
+  - name: Health
+    description: Health check endpoint
+
+paths:
+  /health/check:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Returns the status of the service
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service:
+                    type: string
+                    example: "FastAPI Backend"
+                  status:
+                    type: string
+                    example: "UP"
+      security:
+        - default: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+          - oauth2
+        optional: false
+
+components:
+  securitySchemes:
+    default:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://test.com'
+          scopes: {}
+
+x-wso2-api-key-header: ApiKey
+x-wso2-auth-header: Authorization
+
+x-wso2-cors:
+  corsConfigurationEnabled: false
+  accessControlAllowOrigins:
+    - '*'
+  accessControlAllowCredentials: false
+  accessControlAllowHeaders:
+    - authorization
+    - Access-Control-Allow-Origin
+    - Content-Type
+    - SOAPAction
+    - apikey
+    - Internal-Key
+  accessControlAllowMethods:
+    - GET
+    - PUT
+    - POST
+    - DELETE
+    - PATCH
+    - OPTIONS
+
+x-wso2-production-endpoints:
+  urls:
+    - 'http://localhost:9000/api/v1'
+  type: http
+
+x-wso2-sandbox-endpoints:
+  urls:
+    - 'http://localhost:9000/api/v1'
+  type: http
+
+x-wso2-basePath: /healthcheckapi/1.0.0
+x-wso2-transports:
+  - http
+  - https
+
+x-wso2-application-security:
+  security-types:
+    - oauth2
+  optional: false
+
+x-wso2-response-cache:
+  enabled: false
+  cacheTimeoutInSeconds: 300

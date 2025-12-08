@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: User API
+  description: API for managing users
+  version: 1.0.0.
+
+servers:
+  - url: http://localhost:9000/api/v1
+    description: Local development server
+
+tags:
+  - name: Users
+    description: Operations related to users
+  - name: Orders
+    description: Operations related to orders
+  - name: Health
+    description: Health check endpoints
+
+paths:
+  /users/all:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Retrieve a list of users. Optional query parameter to limit results.
+      parameters:
+        - name: limit
+          in: query
+          description: Max number of users to return
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+      security:
+        - default: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+          - oauth2
+        optional: false
+
+  /users/create:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      description: Create a new user by providing name and email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid input
+      security:
+        - default: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+          - oauth2
+        optional: false
+
+components:
+  schemas:
+    UserCreate:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: Alice
+        email:
+          type: string
+          format: email
+          example: alice@example.com
+
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/UserCreate'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+
+  securitySchemes:
+    default:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://test.com'
+          scopes: {}
+
+x-wso2-api-key-header: ApiKey
+x-wso2-auth-header: Authorization
+x-wso2-cors:
+  corsConfigurationEnabled: false
+  accessControlAllowOrigins:
+    - '*'
+  accessControlAllowCredentials: false
+  accessControlAllowHeaders:
+    - authorization
+    - Access-Control-Allow-Origin
+    - Content-Type
+    - SOAPAction
+    - apikey
+    - Internal-Key
+  accessControlAllowMethods:
+    - GET
+    - PUT
+    - POST
+    - DELETE
+    - PATCH
+    - OPTIONS
+x-wso2-production-endpoints:
+  urls:
+    - 'http://localhost:9000/api/v1'
+  type: http
+x-wso2-sandbox-endpoints:
+  urls:
+    - 'http://localhost:9000/api/v1'
+  type: http
+x-wso2-basePath: /userapi/1.0.0
+x-wso2-transports:
+  - http
+  - https
+x-wso2-application-security:
+  security-types:
+    - oauth2
+  optional: false
+x-wso2-response-cache:
+  enabled: false
+  cacheTimeoutInSeconds: 300
