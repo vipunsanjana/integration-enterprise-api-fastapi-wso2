@@ -1,9 +1,9 @@
-openapi: 3.0.3
+openapi: 3.0.1
 
 info:
   title: User API
   description: API for managing users
-  version: 1.0.0.
+  version: 1.0.0
 
 servers:
   - url: http://localhost:9000/api/v1
@@ -66,28 +66,6 @@ paths:
                     }
                   ]
                 }
-
-        '400':
-          description: Invalid input
-          content:
-            application/json:
-              schema:
-                type: object
-              examples:
-                InvalidInput:
-                  summary: Invalid input
-                  value:
-                    {
-                      "ResponseHeader": {
-                        "StatusCode": 1001,
-                        "StatusMessage": "Error",
-                        "StatusDesc": "Invalid input",
-                        "RequestId": "REQ4001",
-                        "ErrorCode": "ERR_400",
-                        "ErrorMessage": "Invalid query parameter"
-                      },
-                      "ResponseBody": { }
-                    }
 
         '500':
           description: Internal server error

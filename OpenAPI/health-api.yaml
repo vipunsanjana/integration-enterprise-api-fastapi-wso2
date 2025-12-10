@@ -1,137 +1,134 @@
-openapi: 3.0.3
-
+openapi: 3.0.1
 info:
   title: Health Check API
+  version: 1.0.0
   description: Simple health check endpoint
-  version: 1.0.0.
 
 servers:
   - url: http://localhost:9000/api/v1
     description: Local development server
 
-tags:
-  - name: Health
-    description: Health check endpoint
-
 paths:
   /health/check:
     get:
-      tags:
-        - Health
       summary: Health check
       description: Returns the status of the service
-
       responses:
         '200':
           description: Service is up
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  ResponseHeader:
-                    type: object
-                    properties:
-                      StatusCode:
-                        type: integer
-                        example: 1000
-                      StatusMessage:
-                        type: string
-                        example: Success
-                      StatusDesc:
-                        type: string
-                        example: OK
-                      RequestId:
-                        type: string
-                        example: "123456789"
-                  ResponseBody:
-                    type: object
-                    properties:
-                      service:
-                        type: string
-                        example: "FastAPI Backend"
-                      status:
-                        type: string
-                        example: "UP"
-              example:
-                {
-                  "ResponseHeader": {
-                    "StatusCode": 1000,
-                    "StatusMessage": "Success",
-                    "StatusDesc": "OK",
-                    "RequestId": "123456789"
-                  },
-                  "ResponseBody": {
-                    "service": "FastAPI Backend",
-                    "status": "UP"
-                  }
-                }
-
-        '400':
-          description: Failure - Bad request
-          content:
-            application/json:
-              schema:
-                type: object
+                $ref: '#/components/schemas/success'
               examples:
-                BadRequest:
-                  summary: Bad request
+                ServiceUp:
+                  summary: Service is operational
                   value:
-                    {
-                      "ResponseHeader": {
-                        "StatusCode": 1001,
-                        "StatusMessage": "Error",
-                        "StatusDesc": "Bad Request",
-                        "RequestId": "987654321",
-                        "ErrorCode": "ERR_400",
-                        "ErrorMessage": "Invalid request"
-                      },
-                      "ResponseBody": { }
-                    }
+                    ResponseHeader:
+                      StatusCode: 1000
+                      StatusMessage: Success
+                      StatusDesc: OK
+                      RequestId: "123456789"
+                    ResponseBody:
+                      service: FastAPI Backend
+                      status: UP
 
         '500':
-          description: Failure - Internal server error
+          description: Internal server error
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/esb-error'
               examples:
                 InternalServerError:
-                  summary: Internal server error
+                  summary: Unexpected server error
                   value:
-                    {
-                      "ResponseHeader": {
-                        "StatusCode": 1001,
-                        "StatusMessage": "Error",
-                        "StatusDesc": "Internal system error",
-                        "RequestId": "456789123",
-                        "ErrorCode": "ERR_500",
-                        "ErrorMessage": "Unexpected error occurred"
-                      },
-                      "ResponseBody": { }
-                    }
+                    ResponseHeader:
+                      StatusCode: "1001"
+                      StatusMessage: Error
+                      StatusDesc: Internal system error
+                      RequestId: "987654321"
+                      ErrorCode: ERR_500
+                      ErrorMessage: Unexpected error occurred
+                    ResponseBody: { }
 
       security:
         - default:
             - common
-
       x-auth-type: Application & Application User
       x-throttling-tier: Unlimited
-
       x-wso2-application-security:
         security-types:
           - oauth2
         optional: false
 
 components:
+  schemas:
+    success:
+      type: object
+      properties:
+        ResponseHeader:
+          type: object
+          properties:
+            StatusCode:
+              type: integer
+              example: 1000
+            StatusMessage:
+              type: string
+              example: Success
+            StatusDesc:
+              type: string
+              example: OK
+            RequestId:
+              type: string
+              example: "123456789"
+        ResponseBody:
+          type: object
+          properties:
+            service:
+              type: string
+              example: FastAPI Backend
+            status:
+              type: string
+              example: UP
+
+    esb-error:
+      type: object
+      properties:
+        ResponseHeader:
+          type: object
+          properties:
+            StatusCode:
+              type: string
+              example: "1001"
+            StatusMessage:
+              type: string
+              example: Error
+            StatusDesc:
+              type: string
+              example: Internal system error
+            RequestId:
+              type: string
+              example: "987654321"
+            ErrorCode:
+              type: string
+              example: ERR_500
+            ErrorMessage:
+              type: string
+              example: Unexpected error occurred
+        ResponseBody:
+          type: object
+
   securitySchemes:
     default:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: 'https://test.com'
+          authorizationUrl: https://test.com
           scopes:
-            common: common access
+            common: "common scope to invoke CRDB APIs"
+          x-scopes-bindings:
+            common: common_api_user
 
 x-wso2-api-key-header: ApiKey
 x-wso2-auth-header: Authorization
@@ -171,11 +168,6 @@ x-wso2-basePath: /healthcheckapi/1.0.0
 x-wso2-transports:
   - http
   - https
-
-x-wso2-application-security:
-  security-types:
-    - oauth2
-  optional: false
 
 x-wso2-response-cache:
   enabled: false

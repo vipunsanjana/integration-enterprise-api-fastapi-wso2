@@ -1,9 +1,9 @@
-openapi: 3.0.3
+openapi: 3.0.1
 
 info:
   title: Orders API
   description: API for managing orders
-  version: 1.0.0.
+  version: 1.0.0
 
 servers:
   - url: http://localhost:9000/api/v1
@@ -60,28 +60,6 @@ paths:
                     }
                   ]
                 }
-
-        '400':
-          description: Invalid request
-          content:
-            application/json:
-              schema:
-                type: object
-              examples:
-                InvalidRequest:
-                  summary: Invalid request
-                  value:
-                    {
-                      "ResponseHeader": {
-                        "StatusCode": 1001,
-                        "StatusMessage": "Error",
-                        "StatusDesc": "Invalid request",
-                        "RequestId": "REQ4009",
-                        "ErrorCode": "ERR_400",
-                        "ErrorMessage": "Invalid input parameter"
-                      },
-                      "ResponseBody": { }
-                    }
 
         '500':
           description: Internal server error
@@ -255,7 +233,6 @@ components:
               format: date-time
               example: "2025-12-08T10:00:00Z"
 
-
   securitySchemes:
     default:
       type: oauth2
@@ -264,3 +241,52 @@ components:
           authorizationUrl: 'https://test.com'
           scopes:
             common: common access
+
+
+x-wso2-api-key-header: ApiKey
+x-wso2-auth-header: Authorization
+
+x-wso2-cors:
+  corsConfigurationEnabled: false
+  accessControlAllowOrigins:
+    - '*'
+  accessControlAllowCredentials: false
+  accessControlAllowHeaders:
+    - authorization
+    - Access-Control-Allow-Origin
+    - Content-Type
+    - SOAPAction
+    - apikey
+    - Internal-Key
+  accessControlAllowMethods:
+    - GET
+    - PUT
+    - POST
+    - DELETE
+    - PATCH
+    - OPTIONS
+
+x-wso2-production-endpoints:
+  urls:
+    - 'http://localhost:9000/api/v1'
+  type: http
+
+x-wso2-sandbox-endpoints:
+  urls:
+    - 'http://localhost:9000/api/v1'
+  type: http
+
+x-wso2-basePath: /healthcheckapi/1.0.0
+
+x-wso2-transports:
+  - http
+  - https
+
+x-wso2-application-security:
+  security-types:
+    - oauth2
+  optional: false
+
+x-wso2-response-cache:
+  enabled: false
+  cacheTimeoutInSeconds: 300
